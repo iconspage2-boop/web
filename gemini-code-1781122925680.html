@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Live Preview | Agency Demo Workspace</title>
+    <style>
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #0c0c0c; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .iframe-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; margin: 0; padding: 0; overflow: hidden; z-index: 9999; display: none; }
+        iframe { width: 100%; height: 100%; border: none; display: block; }
+        .error-msg { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 20px; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); width: 42px; height: 42px; border-radius: 50%; border-left-color: #ffffff; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <!-- Loading State / Fallback Screen -->
+    <div id="status-screen" class="error-msg">
+        <div class="spinner" id="loader"></div>
+        <h2 id="status-title">Loading Secure Workspace...</h2>
+        <p id="status-desc">Preparing your interactive preview environment.</p>
+    </div>
+
+    <!-- Active Frame -->
+    <div id="wrapper" class="iframe-container">
+        <iframe 
+            id="demo-frame"
+            title="Website Live Preview"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; payment; fullscreen"
+            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"
+            loading="eager">
+        </iframe>
+    </div>
+
+    <script>
+        function launchDemo() {
+            const urlParams = new URLSearchParams(window.location.search);
+            // Looks for ?app= in your URL
+            let targetApp = urlParams.get('app'); 
+
+            if (!targetApp) {
+                // FALLBACK: If no parameter is provided, use your default main site link
+                targetApp = "https://vorn6.lovable.app"; 
+            }
+
+            // Clean up raw URLs if passed without protocols
+            if (!targetApp.startsWith('http://') && !targetApp.startsWith('https://')) {
+                targetApp = 'https://' + targetApp;
+            }
+
+            const frame = document.getElementById('demo-frame');
+            const wrapper = document.getElementById('wrapper');
+            const statusScreen = document.getElementById('status-screen');
+
+            // Inject target app URL into the frame structure
+            frame.src = targetApp;
+            
+            // Unveil the iframe instantly
+            wrapper.style.display = "block";
+            statusScreen.style.display = "none";
+        }
+
+        // Run the script instantly on window load
+        window.onload = launchDemo;
+    </script>
+</body>
+</html>
